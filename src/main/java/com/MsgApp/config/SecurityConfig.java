@@ -20,19 +20,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // CSRF korumasını devre dışı bırakma (modern yaklaşım)
-                .csrf(csrf -> csrf.disable())
-
-                // HTTP isteklerini yetkilendirme
-                .authorizeHttpRequests(authorize -> authorize
-                        // /api/auth/** ile başlayan URL'lere herkes erişebilir
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // Diğer tüm istekler için kimlik doğrulama gerekli
-                        .anyRequest().authenticated()
+                .csrf(csrf -> csrf.disable()) // CSRF korumasını devre dışı bırak
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/ws/**", "/api/auth/**").permitAll() // WebSocket ve Auth yollarına izin ver
+                        .anyRequest().authenticated() // Diğer isteklerde kimlik doğrulama iste
                 )
-
-                // Basic authentication'ı etkinleştirme
-                .httpBasic(basic -> basic.disable());
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .httpBasic(httpBasic -> httpBasic.disable()); // HTTP Basic Auth'u devre dışı bırak
 
         return http.build();
     }

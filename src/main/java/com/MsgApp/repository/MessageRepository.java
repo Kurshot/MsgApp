@@ -5,6 +5,7 @@ import com.MsgApp.model.User;
 import com.MsgApp.enums.MessageType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -36,4 +37,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     // Toplu duyuruları bulma
     List<Message> findByTypeOrderByTimestampDesc(MessageType type);
+
+
 }

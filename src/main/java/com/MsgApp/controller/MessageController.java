@@ -4,6 +4,7 @@ import com.MsgApp.dto.MessageDTO;
 import com.MsgApp.model.Message;
 import com.MsgApp.service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,43 +29,43 @@ public class MessageController {
 
         // Mesajı alıcıya gönder
         messagingTemplate.convertAndSendToUser(
-                message.getRecipient().getUsername(),
+                message.getRecipients().iterator().next().getUsername(),
                 "/queue/private",
                 message
         );
     }
 
     // WebSocket endpoint for group messages
-    @MessageMapping("/group")
-    public void handleGroupMessage(@Payload MessageDTO messageDto) {
-        Message message = messageService.sendGroupMessage(
-                messageDto.getSenderId(),
-                messageDto.getGroupId(),
-                messageDto.getContent()
-        );
+//    @MessageMapping("/group")
+//    public void handleGroupMessage(@Payload MessageDTO messageDto) {
+//        Message message = messageService.sendGroupMessage(
+//                messageDto.getSenderId(),
+//                messageDto.getGroupId(),
+//                messageDto.getContent()
+//        );
+//
+//        // Mesajı gruba gönder
+//        messagingTemplate.convertAndSend(
+//                "/topic/group." + messageDto.getGroupId(),
+//                message
+//        );
+//    }
 
-        // Mesajı gruba gönder
-        messagingTemplate.convertAndSend(
-                "/topic/group." + messageDto.getGroupId(),
-                message
-        );
-    }
+//    // REST endpoint to get message history
+//    @GetMapping("/history/{userId}")
+//    public ResponseEntity<?> getMessageHistory(
+//            @PathVariable Long userId,
+//            @RequestParam Long otherUserId) {
+//        return ResponseEntity.ok(
+//                messageService.getMessageHistory(userId, otherUserId)
+//        );
+//    }
 
-    // REST endpoint to get message history
-    @GetMapping("/history/{userId}")
-    public ResponseEntity<?> getMessageHistory(
-            @PathVariable Long userId,
-            @RequestParam Long otherUserId) {
-        return ResponseEntity.ok(
-                messageService.getMessageHistory(userId, otherUserId)
-        );
-    }
-
-    // REST endpoint to get unread messages
-    @GetMapping("/unread/{userId}")
-    public ResponseEntity<?> getUnreadMessages(@PathVariable Long userId) {
-        return ResponseEntity.ok(
-                messageService.getUnreadMessages(userId)
-        );
-    }
+//    // REST endpoint to get unread messages
+//    @GetMapping("/unread/{userId}")
+//    public ResponseEntity<?> getUnreadMessages(@PathVariable Long userId) {
+//        return ResponseEntity.ok(
+//                messageService.getUnreadMessages(userId)
+//        );
+//    }
 }

@@ -1,19 +1,20 @@
 package com.MsgApp.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
     // application.properties'den JWT secret key'i alıyoruz
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final Key jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     // Token'ın geçerlilik süresini properties'den alıyoruz (milisaniye cinsinden)
     @Value("${jwt.expiration}")
@@ -28,7 +29,7 @@ public class JwtTokenProvider {
                 .setSubject(username)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }
 

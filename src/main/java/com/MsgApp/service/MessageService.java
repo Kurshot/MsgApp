@@ -7,6 +7,8 @@ import com.MsgApp.model.*;
 import com.MsgApp.repository.MessageRepository;
 import com.MsgApp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,4 +82,5 @@ public class MessageService {
 
         return decryptedContent;
     }
+
 }
