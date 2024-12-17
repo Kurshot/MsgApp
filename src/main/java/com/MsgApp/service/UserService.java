@@ -4,6 +4,7 @@ import com.MsgApp.model.User;
 import com.MsgApp.repository.UserRepository;
 import com.MsgApp.exception.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -135,5 +137,32 @@ public class UserService {
         return userRepository.findById(userId)
                 .map(User::isOnline)
                 .orElse(false);
+    }
+
+
+    /**
+     * Kullanıcının çevrimiçi durumunu günceller ve son görülme zamanını kaydeder.
+     * Bu metod, kullanıcı WebSocket bağlantısı kurduğunda veya bağlantıyı kestiğinde çağrılır.
+     *
+     * @param username Durumu güncellenecek kullanıcının adı
+     * @param status true ise kullanıcı çevrimiçi, false ise çevrimdışı olarak işaretlenir
+     */
+    @Transactional
+    public void updateUserStatus(String username, boolean status) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("Kullanıcı bulunamadı: " + username));
+
+        // Kullanıcının çevrimiçi durumunu güncelle
+        user.setOnline(status);
+
+        // Son görülme zamanını güncelle
+        user.setLastSeen(LocalDateTime.now());
+
+        userRepository.save(user);
+
+        // Eğer log tutmak isterseniz:
+        log.info("Kullanıcı {} durumu güncellendi. Yeni durum: {}",
+                username,
+                status ? "çevrimiçi" : "çevrimdışı");
     }
 }
