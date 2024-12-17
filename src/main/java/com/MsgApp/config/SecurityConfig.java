@@ -22,7 +22,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF korumasını devre dışı bırak
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/ws/**", "/api/auth/**").permitAll() // WebSocket ve Auth yollarına izin ver
+                        .requestMatchers("/ws/**", "/api/auth/**", "/**").permitAll() // WebSocket ve Auth yollarına izin ver
                         .anyRequest().authenticated() // Diğer isteklerde kimlik doğrulama iste
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
